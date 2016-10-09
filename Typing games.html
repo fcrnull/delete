@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>打字</title>
+		<style type="text/css">
+			.foon {
+				width: 550px;
+				height: 600px;
+				border: 1px solid black;
+				background: lightcyan;
+				position: relative;
+			}
+			
+			.main {
+				/*font-size: 2em;*/
+				/*color: white;*/
+				margin-bottom: 10px;
+			}
+			
+			.list {
+				width: 500px;
+				height: 400px;
+				border: 1px solid black;
+				color: green;
+				font-size: 2em;
+				line-height: 50px;
+			}
+			
+			.pink {
+				width: 100%;
+				height: 100%;
+				/*border: 1px solid black;*/
+				position: absolute;
+				left: 0px;
+				top: 0px;
+				background: black;
+				color: red;
+				text-align: center;
+				opacity: 0.8;
+				display: none;
+			}
+			
+			.shi {
+				font-size: 2em;
+				position: absolute;
+				left: 100px;
+				top: 200px;
+			}
+			
+			.su {
+				font-size: 2em;
+				position: absolute;
+				left: 100px;
+				top: 250px;
+			}
+			.suu {
+				font-size: 2em;
+				position: absolute;
+				left: 100px;
+				top: 300px;
+			}
+			
+			.btn {
+				font-size: 1.5em;
+				padding: 5px;
+				border: 1px solid black;
+				background: red;
+				position: absolute;
+				right: 20px;
+				bottom: 10px;
+				/*display: none;*/
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="foon">
+
+			<div class="main">Though there is much to be concerned about, there is far, far more for which to be thankful. Though life's goodness can at times be overshadowed, it is never outweighed.
+　　For every single act that is senselessly destructive, there are thousands more small, quiet acts of love, kindness and compassion. For every person who seeks to hurt, there are many, many more who devote their lives to helping and to healing.
+　　There is goodness to life that cannot be denied. </div>
+			<textarea name="" rows="" cols="" class="list"></textarea>
+			<div class="pink">
+				<div class="shi">
+					你所用時間：
+				</div>
+				<div class="su">
+					你的速度:
+				</div>
+				<div class="suu">
+					你的正确率:
+				</div>
+
+			</div>
+			<button class="btn">再试一次</button>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var main = document.querySelector('.main');
+		var list = document.querySelector('.list');
+		var pink = document.querySelector('.pink');
+		var btn = document.querySelector('.btn');
+		var su = document.querySelector('.su');
+		var suu = document.querySelector('.suu');
+		var shi = document.querySelector('.shi');
+		var arr = [];
+		var time1 = 0;
+		var time2 = 0;
+		var ansk = 0;
+		var a = [];
+
+		var zi = main.innerText;
+		main.innerHTML = "";
+		var new_ = zi.split("");
+		//	 console.log(new_);
+
+		for(var i = 0; i < new_.length; i++) {
+			main.innerHTML += '<span>' + new_[i] + '</span>';
+		}
+
+		var span_ = document.querySelectorAll('span');
+
+		document.onkeypress = function() {
+			var event = window.event || event;
+			var charcode = event.keyCode;
+			var codeStr = String.fromCharCode(charcode);
+			//	 console.log(charcode);
+			arr.push(codeStr);
+
+			if(codeStr == new_[arr.length - 1]) {
+				span_[arr.length - 1].style.color = 'red';
+				
+				a.push(span_[arr.length - 1]);
+				console.log(a.length);
+
+			}
+			//			for(var i = 0; i < span_.length; i++) {
+			//				if(span_[i].style.color == 'red') {
+			//					ansk++;
+			////					console.log(ansk);
+			//				}
+			//			}
+
+			if(codeStr == new_[0]) {
+				var data = new Date();
+				time1 = data.getTime();
+
+			}
+			if(codeStr == new_[span_.length - 1] && arr.length == span_.length) {
+				var data2 = new Date();
+				time2 = data2.getTime();
+				//总时间
+				var time_ = (time2 - time1) / 1000;
+				//计算速度
+				var sudu = Math.ceil(span_.length / time_);
+				//每分钟
+				var sudu_ = sudu * 60;
+				//正确率
+				var ansk_ = (((a.length / span_.length).toFixed(2)) * 100) + '%';
+				console.log(ansk_);
+				pink.style.display = 'block';
+				btn.style.display = 'block';
+				shi.innerHTML = '你所用時間：' + time_ + '秒；';
+				su.innerHTML = '你的速度：' + sudu + '字/秒!';
+				suu.innerHTML = '你的正确率：' + ansk_ ;
+				
+				
+				setTimeout(function() {
+					list.disabled = 'disabled';
+				}, 30);
+
+			}
+
+		}
+		document= function() {
+			var event = window.event || event;
+			var char = event.keyCode;
+
+			if(char == 8) {
+				arr.length--;
+				span_[arr.length].style.color = 'black';
+			}
+		}
+		btn.onclick = function() {
+			window.location.reload();
+
+		}
+	</script>
+
+</html>

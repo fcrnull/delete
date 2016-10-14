@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style media="screen">
+			.maindiv {
+				position: relative;
+				;
+				background: brown;
+			}
+			
+			.score {
+				font-size: 25px;
+			}
+			
+			.maxscore {
+				font-size: 25px;
+			}
+			
+			.akse {
+				width: 440px;
+				height: 660px;
+				background: black;
+				position: absolute;
+				;
+				;
+				top: 0;
+				left: 0;
+				opacity: 0.6;
+				color: yellow;
+				font-size: 4rem;
+				line-height: 400px;
+				text-align: center;
+				display: none;
+			}
+			
+			.chong {
+				color: yellowgreen;
+				position: absolute;
+				top: 300px;
+				left: 120px;
+				width: 200px;
+				height: 80px;
+				line-height: 80px;
+				text-align: center;
+				font-size: 2.5rem;
+				border: 3px solid green;
+				border-radius: 10px;
+			}
+			
+			.col {
+				width: 20px;
+				height: 20px;
+				border: 1px solid grey;
+				display: inline-block;
+			}
+			
+			.activesnake {
+				background: lightgreen;
+			}
+			
+			.egg {
+				background: black;
+				border-radius: 50%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="score">得分:0</div>
+		<div class="maxscore">最高分:</div>
+
+		<div class="maindiv">
+			<div class="akse">game over!
+				<div class="chong">再来一次
+
+				</div>
+			</div>
+
+		</div>
+
+	</body>
+	<script type="text/javascript">
+		var maindiv = document.querySelector('.maindiv');
+		var scorediv = document.querySelector('.score');
+		var maxscore = document.querySelector('.maxscore');
+		var akse = document.querySelector('.akse');
+		var chong = document.querySelector('.chong');
+		var rownum = 30; //行
+		var colnum = 20; //列
+		//画布数组
+		var canvasarray = [];
+		//蛇的移动偏移量
+		var x = 2;
+		var y = 0;
+
+		function canvasbg(rownum, colnum) {
+			for(var i = 0; i < rownum; i++) { //设置行宽
+				var rowdiv = document.createElement('div');
+				rowdiv.style.fontSize = '0px';
+				var rowarray = [];
+				for(var j = 0; j < colnum; j++) { //设置列高
+					var coldiv = document.createElement('div');
+					coldiv.className = 'col';
+					rowdiv.appendChild(coldiv);
+					rowarray.push(coldiv);
+				}
+				maindiv.appendChild(rowdiv);
+				canvasarray.push(rowarray);
+			}
+			maindiv.style.width = colnum * 20 + colnum * 2 * 1 + 'px';
+			maindiv.style.height = "auto";
+		}
+		var delaytime = null;
+		var changerdir = true;
+		//		添加键盘事件监听方向键来改变蛇的移动方向;
+		document.onkeydown = function(event) {
+			//判断是否需要改变方向,ture表示需要,false  不需要
+			if(!changerdir) {
+				return; //表示直接结束函数,后续代码不执行
+			}
+			event = event || window.event;
+			//			假设蛇向右移动,按方向键左右都不起作用
+			if(direction == 'right' && event.keyCode == 37) {
+				return;
+			}
+			if(direction == 'left' && event.keyCode == 39) {
+				return;
+			}
+			if(direction == 'up' && event.keyCode == 40) {
+				return;
+			}
+			if(direction == 'down' && event.keyCode == 38) {
+				return;
+			}
+			switch(event.keyCode) {
+				case 37:
+					direction = 'left';
+					break;
+				case 38:
+					direction = 'up';
+					break;
+				case 39:
+					direction = 'right';
+					break;
+				case 40:
+					direction = 'down';
+					break;
+				default:
+
+			}
+			changerdir = false;
+			delaytime = setTimeout(function() {
+				changerdir = true;
+			}, 100);
+		}
+		var snakebody = []; //定义一个数组存放蛇身;
+		var direction = 'down'; //操作 蛇 移动的方向
+		var score = 0;
+		//创建一个蛇的初始模型
+		function snake() {
+			for(var i = 0; i < 3; i++) {
+				canvasarray[0][i].className = 'col activesnake';
+				snakebody.push(canvasarray[0][i]);
+			}
+		}
+		//蛇的移动函数
+		function snakemove() {
+			var snametimer = setInterval(function() {
+				//根据设置的方向来设置  蛇头的位置
+				switch(direction) {
+					case 'right':
+						x++;
+						break;
+					case 'left':
+						x--;
+						break;
+					case 'up':
+						y--;
+						break;
+					case 'down':
+						y++;
+						break;
+					default:
+
+				}
+				//判断碰壁时游戏结束;
+				if(y < 0 || y > rownum || x < 0 || x > colnum) {
+					akse.style.display = 'block';
+					clearInterval(snametimer);
+					return;
+				}
+				//判断蛇碰到自己  游戏结束
+				for(var i = 0; i < snakebody.length; i++) {
+					if(snakebody[i] == canvasarray[y][x]) {
+						akse.style.display = 'block';
+						clearInterval(snametimer);
+						return;
+					}
+				}
+				//判断蛇头移动的位置是否有蛋
+				if(eggx == x && eggy == y) {
+					canvasarray[eggy][eggx].className = 'col activesnake';
+					snakebody.push(canvasarray[eggy][eggx]);
+					score++;
+					scorediv.innerHTML = '得分:' + score;
+					// 数据本地保存   产生最高分
+					var historyscore = localStorage.getItem('maxscore');
+					if(historyscore < score) {
+						localStorage.setItem('maxscore', score);
+						historyscore = score;
+					}
+					maxscore.innerHTML = '最高分:' + historyscore;
+
+					createegg(); //在随机产生一个蛋
+				} else {
+					snakebody[0].className = 'col';
+					snakebody.shift();
+					canvasarray[y][x].className = 'col activesnake';
+					snakebody.push(canvasarray[y][x]);
+				}
+
+			}, 200)
+		}
+		//随机函数
+		function random(max) {
+			var ran = parseInt(Math.random() * max);
+			return ran;
+		}
+		//生成蛋
+		function createegg() {
+			//随机出新的 egg 的下标  的 x 和 y
+			eggx = random(colnum);
+			eggy = random(rownum);
+			//如果即将生蛋的位置和蛇身 重合
+			if(canvasarray[eggy][eggx].className == 'col activesnake') {
+				createegg();
+			} else {
+				//否则  新生的蛋的位置  并且修改样式;
+				canvasarray[eggy][eggx].className = 'col egg';
+			}
+		}
+		chong.onclick = function() {
+				window.location.reload();
+			}
+			//调用函数
+		canvasbg(rownum, colnum);
+		snake();
+		snakemove();
+		createegg();
+	</script>
+
+</html>

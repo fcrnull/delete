@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style media="screen">
+      .minbox{
+        width: 300px;
+        height: auto;
+        position: absolute;
+      }
+      .minbox img{
+        width: 300px;
+        height: 300px;
+      }
+      .movebox{
+        border: 1px solid red;
+        width: 100px;
+        height: 100px;
+        background: red;
+        opacity: 0.7;
+        position: absolute;
+        display: none;
+      }
+      .maxbox{
+        margin-left: 300px;
+        display: inline-block;
+        width: 500px;
+        height: 500px;
+        border: 1px solid red;
+        overflow: hidden;
+        display: none;
+      }
+      .maxbox img{
+        width: 1500px;
+        height: 1500px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="minbox">
+      <img src="img/4.jpg" alt="" />
+      <div class="movebox"></div>
+    </div>
+    <div class="maxbox">
+      <img src="img/4.jpg" alt="" />
+    </div>
+
+  </body>
+  <script type="text/javascript">
+  var minbox=document.querySelector('.minbox');
+  var movebox=document.querySelector('.movebox');
+  var maxbox=document.querySelector('.maxbox');
+  var maximg=document.querySelector('.maxbox img');
+
+//添加移动事件
+  minbox.onmousemove=function(){
+    movebox.style.display='block';
+    maxbox.style.display='block';
+
+    var dismaxx=minbox.offsetWidth-movebox.offsetWidth;
+    var dismaxy=minbox.offsetHeight-movebox.offsetHeight;
+    var event=event||window.event;
+
+    var disx=event.clientX-movebox.offsetWidth/2;
+    var disy=event.clientY-movebox.offsetHeight/2;
+//禁止移动方块出边框
+    if(disx<=0){
+      disx=0;
+    }
+    if(disy<=0){
+      disy=0;
+    }
+
+    if(disx>=dismaxx){
+      disx=dismaxx;
+    }
+    if(disy>=dismaxy){
+      disy=dismaxy;
+    }
+
+    movebox.style.top=disy+'px';
+    movebox.style.left=disx+'px';
+
+//获取比例
+    var scalex=movebox.offsetLeft/dismaxx;
+    var scaley=movebox.offsetTop/dismaxy;
+
+      maxbox.scrollLeft=(maximg.offsetWidth-maxbox.clientWidth)*scalex;
+      maxbox.scrollTop=(maximg.offsetHeight-maxbox.clientHeight)*scaley;
+
+  }
+
+  minbox.onmouseout=function(){
+    movebox.style.display='none';
+    maxbox.style.display='none';
+  }
+
+  </script>
+</html>

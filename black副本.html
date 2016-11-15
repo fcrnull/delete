@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title>黑白块</title>
+		<style type="text/css">
+			.canvas {
+				width: 408px;
+				height: 608px;
+				border: 1px solid black;
+				font-size: 0px;
+				overflow: hidden;
+				position: relative;
+				/*margin: 50px;*/
+			}
+			
+			.main {
+				width: 408px;
+				height: auto;
+				position: absolute;
+				bottom: 0;
+			}
+			
+			.box {
+				width: 100px;
+				height: 150px;
+				border: 1px solid black;
+				display: inline-block;
+			}
+			
+			.box2 {
+				width: 100px;
+				height: 150px;
+				border: 1px solid black;
+				display: inline-block;
+				background: lightcyan;
+			}
+			
+			.menu {
+				width: 550px;
+				height: 608px;
+				/*border: 1px solid black;*/
+				margin: 50px;
+				position: relative;
+			}
+			
+			.timer,
+			.score,
+			.hscore {
+				width: 100px;
+				height: 40px;
+				font-size: 20px;
+				border: 1px solid black;
+				position: absolute;
+				text-align: center;
+				line-height: 40px;
+			}
+			
+			.timer {
+				right: 20px;
+				top: 10px;
+			}
+			
+			.score {
+				right: 20px;
+				top: 60px;
+			}
+			
+			.hscore {
+				right: 20px;
+				top: 110px;
+			}
+			
+			.start {
+				width: 200px;
+				height: 100px;
+				border-radius: 10px;
+				background: red;
+				line-height: 100px;
+				text-align: center;
+				color: yellow;
+				font-size: 2.5rem;
+				position: absolute;
+				right: 103px;
+				bottom: 185px;
+			}
+			
+			.ansk {
+				width: 408px;
+				height: 608px;
+				background: rgba(0, 0, 0, 0.7);
+				position: absolute;
+				top: 0;
+				left: 0;
+				display: none;
+			}
+			
+			.hang_ {
+				width: 100%;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="menu">
+
+			<div class="canvas">
+				<div class="main">
+
+				</div>
+			</div>
+			<div class="timer">时间:20秒</div>
+			<div class="score">分数:0</div>
+			<div class="hscore">最高分:0</div>
+
+			<div class="ansk">
+				<div class="start">重来</div>
+
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var main = document.querySelector('.main');
+		var timer = document.querySelector('.timer');
+		var score = document.querySelector('.score');
+		var ansk = document.querySelector('.ansk');
+		var start = document.querySelector('.start');
+		var hscore = document.querySelector('.hscore');
+		var y = 0;
+		var score_ = 0;
+		//		第一行无需修饰
+		for(var z = 0; z < 4; z++) {
+			var box_1 = document.createElement('div');
+			box_1.className = 'box2';
+			main.insertBefore(box_1, main.firstChild);
+		}
+		var hangarr = [];
+
+		function hahaha() {
+			//				行
+			for(var j = 0; j < 6; j++) {
+				var hang = document.createElement('div');
+				hang.className = 'hang_';
+				var matharr = [];
+				var suiji = parseInt(Math.random() * 4);
+				//				从下向上生成
+				main.insertBefore(hang, main.firstChild);
+				//				列
+				for(var i = 0; i < 4; i++) {
+					var box_ = document.createElement('div');
+					box_.className = 'box';
+					matharr.push(box_);
+					hang.appendChild(box_);
+				}
+
+				matharr[suiji].style.background = 'black';
+				hangarr.push(matharr);
+
+				if(j == 0) {
+					hangarr[j][suiji].onclick = qqq;
+
+				}
+			}
+
+		}
+		hahaha();
+		var timer_ = 20;
+		var flag = false;
+		//时间
+		tim = setInterval(function() {
+			if(flag) {
+				if(timer_ == 0) {
+					ansk.style.display = 'block';
+				} else {
+					timer_ -= 1;
+					timer.innerHTML = '时间:' + timer_ + '秒';
+				}
+			}
+		}, 1000);
+		//		重新加载
+		start.onclick = function() {
+				window.location.reload();
+			}
+			//      每个方块添加点击事件
+		function addclick(aaa) {
+			aaa.parentElement.previousSibling.firstChild.onclick = qqq;
+			aaa.parentElement.previousSibling.firstChild.nextSibling.onclick = qqq;
+			aaa.parentElement.previousSibling.firstChild.nextSibling.nextSibling.onclick = qqq;
+			aaa.parentElement.previousSibling.lastChild.onclick = qqq;
+		}
+
+		function qqq() {
+
+			flag = true;
+			if(this.style.background == 'black') {
+				//向下移动
+				y -= 152;
+				main.style.bottom = y + 'px';
+				this.style.background = 'lightslategrey';
+				hahaha();
+				score_++;
+				score.innerHTML = '分数:' + score_;
+				//				最高分					
+				hisscore = localStorage.getItem('mscore');
+				console.log(hisscore);
+				if(hisscore < score_) {
+					localStorage.setItem('mscore', score_);
+					hisscore = score_;
+				}
+				hscore.innerHTML = '最高分:' + hisscore;
+
+			} else {
+				this.style.background = 'red';
+				ansk.style.display = 'block';
+				clearInterval(tim);
+			}
+			addclick(this);
+		}
+	</script>
+
+</html>
